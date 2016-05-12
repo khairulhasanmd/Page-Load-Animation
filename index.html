@@ -7,43 +7,40 @@
 	
 $( document ).ready(function() {
  $('a').click(function() {
- 		var dt;
- 		if (/#/.test(this.href)) {
- 			return true;
- 		}else{
-	 		document.getElementById("before-loader").style.display= "block";
-	    var that = this;
-	    $.ajax({
-			  type: "GET",
-			  url: that.href,
-			  success: function(response){
-			  	document.open();
-			    document.write(response);
-			    document.title = response.pageTitle;
-			    window.history.pushState({"html":response.html,"pageTitle":response.pageTitle},"", that.href);
-	        document.close();
-			  },
-			  error: function(XMLHttpRequest, textStatus, errorThrown) {
-			    alert(textStatus + ' ' + errorThrown);
-			    document.getElementById("before-loader").style.display= "none";
-			  }
-			});
-	    return false;
-	  }
+        if (/#/.test(this.href)) {
+            return true;
+        }else{
+      window.history.pushState(null, 'Production Workflow & Sales Management', this.href);
+            loadContent(this.href);
+        return false;
+      }
   });
-
- $(window).on("popstate", function(e) {
-    change(e.originalEvent.state);
-	});
-
-	(function(original) {
-	    history.pushState = function(state) {
-	        change(state);
-	        return original.apply(this, arguments);
-	    };
-	})(history.pushState);
-
 });
+
+
+function loadContent(href) {
+  document.getElementById("before-loader").style.display= "block";
+  $.ajax({
+    type: "GET",
+    url: href,
+    success: function(response){
+      document.open();
+      document.title = response.pageTitle;
+      document.write(response);
+      document.close();
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      alert(textStatus + ' ' + errorThrown);
+      document.getElementById("before-loader").style.display= "none";
+    }
+  });
+}
+
+
+window.onpopstate =  function(event) {
+  link = location.pathname.replace(/^.*[\\/]/, ""); // get filename only
+  loadContent(link);
+};
 
 </script>
 
